@@ -1,0 +1,7 @@
+---
+# restart DHCPD
+- name: restart dhcp-server
+  sudo: yes
+  service:
+    name: 'isc-dhcp-server'
+    state: 'restarted'

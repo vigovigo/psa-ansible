@@ -1,0 +1,10 @@
+---
+# restart SSHD
+- name: restart sshd
+  service: name=ssh state=restarted
+
+- name: update ca store
+  shell: cat /usr/local/share/ca-certificates/team07-root.pem >> /etc/ssl/certs/ca-certificates.crt
+
+- name: restart autofs
+  service: name=autofs state=restarted

@@ -1,0 +1,8 @@
+---
+- name: Configuration Management for PSA LDAP
+  hosts: vmpsateam07-02
+  user: root
+  sudo: yes
+  
+  roles:
+    - psa_ldap

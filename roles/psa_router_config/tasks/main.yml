@@ -1,0 +1,10 @@
+---
+  # Install PSA Config Files
+
+- name: Manage dhcpd.conf Configuration File on R1
+  action: copy src=/etc/ansible/roles/psa_router_config/files/dhcpd.conf
+    dest='/etc/dhcp/dhcpd.conf'
+    owner=0 group=0 mode=644
+  with_items: dhcpd.conf
+  notify:
+    - restart dhcp-server

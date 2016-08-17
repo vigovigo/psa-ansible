@@ -1,0 +1,19 @@
+# PSA Managed Servers
+[psa]
+vmpsateam07-01:60711
+vmpsateam07-03:60731
+vmpsateam07-router:60791
+vmpsateam07-08:60781
+vmpsateam07-04:60741
+vmpsateam07-05:60751
+vmpsateam07-06:60761
+vmpsateam07-07:60771
+vmpsateam07-02:60721
+vmpsateam07-92:60792
+
+[psa_db]
+vmpsateam07-04:60741
+vmpsateam07-05:60751
+
+[tools]
+vmpsateam07-06:60761

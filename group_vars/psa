@@ -1,0 +1,137 @@
+# ssh configuration file
+psa_sshd_port: 22
+psa_pubkeyauth: yes
+psa_passwdauth: no
+psa_sshd_permitrootlogin: without-password
+mysql_root_password: fart
+mysql_user_password: enigma
+
+
+# PSA User/Group Configuration
+
+psa_users:
+
+# TEAM 01
+  - name:   Dominik Drexler
+    user:   drexledo
+    uid:    1011
+    group:  1010
+
+  - name:   Astrid Berchtold
+    user:   berchtoa
+    uid:    1012
+    group:  1010
+
+# TEAM 02
+  - name:   Michael Mitterer
+    user:   mitterem
+    uid:    1021
+    group:  1020
+
+  - name:   Lukas Langlechner
+    user:   langlech
+    uid:    1022
+    group:  1020
+
+# TEAM 03
+  - name:   Michael Legenc
+    user:   legenc
+    uid:    1031
+    group:  1030
+
+  - name:   Daniel Krieger
+    user:   kriegerd
+    uid:    1032
+    group:  1030
+
+  - name:   Max Muth
+    user:   muthm
+    uid:    1033
+    group:  1030
+
+# TEAM 04
+  - name:   Peter Niedermeier
+    user:   niedermp
+    uid:    1041
+    group:  1040
+
+  - name:   Isabella Theiss
+    user:   theissi
+    uid:    1042
+    group:  1040
+
+# TEAM 05
+  - name:   Jennifer Tipecska
+    user:   tipecska
+    uid:    1051
+    group:  1050
+
+  - name:   Valentin Zielgmeier
+    user:   zieglmev
+    uid:    1052
+    group:  1050
+
+# TEAM 06
+  - name:   Benedikt Schlagberger
+    user:   schlagbe
+    uid:    1061
+    group:  1060
+
+  - name:   Richart Otto
+    user:   ottor
+    uid:    1062
+    group:  1060
+
+# TEAM 07
+  - name:   Sebastian Kiwus
+    user:   kiwus
+    uid:    1071
+    group:  1070
+
+  - name:   Viktor Goldberg
+    user:   goldberv
+    uid:    1072
+    group:  1070
+
+# TEAM 08
+  - name:   Christian Lübben
+    user:   luebben
+    uid:    1081
+    group:  1080
+
+  - name:   Patrick Werneck
+    user:   werneck
+    uid:    1082
+    group:  1080
+
+# TEAM 10
+  - name:   Nadim Yonis
+    user:   yonis
+    uid:    1101
+    group:  1100
+
+  - name:   Katharina Bui
+    user:   buik
+    uid:    1102
+    group:  1100
+
+
+psa_groups:
+  - name: team01
+    gid:  1010
+  - name: team02
+    gid:  1020
+  - name: team03
+    gid:  1030
+  - name: team04
+    gid:  1040
+  - name: team05
+    gid:  1050
+  - name: team06
+    gid:  1060
+  - name: team07
+    gid:  1070
+  - name: team08
+    gid:  1080
+  - name: team10
+    gid:  1100

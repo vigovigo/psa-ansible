@@ -1,0 +1,16 @@
+dn: uid={{ item.user }},ou=teams,dc=team07,dc=psa,dc=rbg,dc=tum,dc=de
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: {{ item.name }}
+uid: {{ item.user }}
+uidNumber: {{ item.uid }}
+gidNumber: {{ item.group }}
+homeDirectory: /home/{{ item.user }}
+loginShell: /bin/bash
+gecos: {{ item.name }}
+userPassword: {crypt}x
+shadowLastChange: 0
+shadowMax: 0
+shadowWarning: 0

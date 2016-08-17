@@ -1,0 +1,8 @@
+---
+- name: User Management for PSA Machines
+  hosts: all
+  user: root
+  sudo: yes
+
+  roles:
+    - psa_common

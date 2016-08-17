@@ -1,0 +1,6 @@
+---
+
+mk_inetd_daemon_managed:
+  - 'xinetd'
+mk_conf_dir: '/etc/check_mk'
+mk_plugins_dir: '/usr/lib/check_mk_agent/plugins'

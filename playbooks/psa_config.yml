@@ -1,0 +1,13 @@
+---
+- name: Configuration Management for PSA Machines
+  hosts: all
+  user: root
+  sudo: yes
+
+- hosts: vmpsateam07-router
+  roles:
+    - psa_router_config
+
+- hosts: vmpsateam07-04 vmpsateam07-05
+  roles:
+    - psa_db_config

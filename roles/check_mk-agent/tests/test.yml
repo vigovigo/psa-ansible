@@ -1,0 +1,32 @@
+---
+
+- hosts: all
+  pre_tasks:
+    - name: APT_REPOSITORY | Add backport repository for Debian Jessie
+      apt_repository: >
+        repo='deb http://httpredir.debian.org/debian jessie-backports main'
+        state=present
+      when: >
+        ansible_distribution == 'Debian' and
+        ansible_distribution_major_version | version_compare(8)
+  roles:
+    - ../../
+  vars:
+    mk_port: 16556
+    mk_only_from:
+      - '127.0.0.1'
+      - '10.0.0.2'
+  post_tasks:
+    - name: SERVICE | Ensure xinetd service is started
+      service: >
+        name={{ mk_inetd_daemon }}
+        state=started
+    - name: WAIT_FOR | Check check-mk-agent service is running (low timeout)
+      wait_for: >
+        host=127.0.0.1
+        port={{ mk_port }}
+        state=started
+        search_regex=check_mk
+        timeout=1
+        connect_timeout=1
+        delay=0

@@ -1,0 +1,188 @@
+---
+
+- name: Install MySQL
+  apt: name={{ item }} update_cache=yes cache_valid_time=3600 state=present
+  sudo: yes
+  with_items:
+   - python-mysqldb
+   - mysql-server
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Start the MySQL service
+  sudo: yes
+  service:
+    name: mysql
+    state: started
+    enabled: true
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: update mysql root password for all root accounts
+  sudo: yes
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    priv: "*.*:ALL,GRANT"
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create Database 1 for Team07
+  mysql_db:
+    name: t07-1
+    state: present
+    login_password: "{{ mysql_root_password }}"
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create Database 2 for Team07
+  mysql_db:
+    name: t07-2
+    state: present
+    login_password: fart
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create Admin for t07-1 DB with local access only
+  mysql_user:
+    name: t07-1-adm
+    host: "{{ item }}"
+    password: "{{ mysql_user_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "t07-1.*:ALL"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create Admin for t07-2 DB with remote access only
+  mysql_user:
+    name: t07-2-adm
+    host: "{{ item }}"
+    password: "{{ mysql_user_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "t07-2.*:ALL"
+  with_items:
+    - 192.168.7.1
+    - vm1.psa-team07.informatik.tu-muenchen.de
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create User for t07-1/t07-2 with read-only rights
+  mysql_user:
+    name: t07-ro
+    host: "{{ item }}"
+    password: "{{ mysql_user_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: inventory_hostname == "vmpsateam07-04"
+
+
+  ## MySQL Server Backup on db-backup.psa-team07.informatik.tu-muenchen.de
+
+- name: Active Binary Logging and set server-id for Replication
+  template: src=/etc/ansible/roles/psa_db_config/templates/mysqld.cnf.j2
+    dest=/etc/mysql/mysql.conf.d/mysqld.cnf
+    backup=yes
+    owner=0 group=0 mode=644
+  notify: Restart MySQL Server
+
+- name: Create Replication User on DB1
+  mysql_user:
+    name: db1-rep
+    host: "{{ item }}"
+    password: "{{ mysql_user_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "*.*:REPLICATION SLAVE"
+  with_items:
+    - db-backup.psa-team07.informatik.tu-muenchen.de
+    - 127.0.0.1
+    - localhost
+  when: inventory_hostname == "vmpsateam07-04"
+
+#- name: Create Replication from Master on db-backup
+#  mysql_replication:
+#    mode: changemaster
+#    master_host: 192.168.7.4
+#    master_log_file: mysql-bin.000001
+#    master_log_pos: 1515
+#    master_user: db1-rep
+#    master_password: "{{ mysql_user_password }}"
+#    login_user: root
+#    login_password: "{{ mysql_root_password }}"
+#  when: inventory_hostname == "vmpsateam07-05"
+
+# Create Database for our customer TEAM06
+
+- name: Create DB for customer TEAM06
+  mysql_db:
+    name: t06-1
+    state: present
+    login_password: "{{ mysql_root_password }}"
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create User for customer TEAM06 and add remote machine
+  mysql_user:
+    name: t06-1-adm
+    host: "{{ item }}"
+    password: "team06"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "t06-1.*:ALL"
+  with_items:
+    - 192.168.76.7
+  when: inventory_hostname == "vmpsateam07-04"
+
+
+
+# TEST DB for LimeSurvey
+
+- name: Create Test Database for LimeSurvey
+  mysql_db:
+    name: lime-test
+    state: present
+    login_password: "{{ mysql_root_password }}"
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create User for Test DB LimeSurvey
+  mysql_user:
+    name: lime-test-user
+    host: "lime.psa-team07.informatik.tu-muenchen.de"
+    password: "{{ mysql_user_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "lime-test.*:ALL"
+  when: inventory_hostname == "vmpsateam07-04"
+
+# Create Database for customer TEAM05
+
+- name: Create DB for customer TEAM05
+  mysql_db:
+    name: t05-1
+    state: present
+    login_password: "{{ mysql_root_password }}"
+  when: inventory_hostname == "vmpsateam07-04"
+
+- name: Create User for customer TEAM05 and add remote maschine
+  mysql_user:
+    name: t05-1-adm
+    host: "{{ item }}"
+    password: "team05"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "t05-1.*:ALL"
+  with_items:
+    - localhost
+    - vm04.psa-team05.informatik.tu-muenchen.de

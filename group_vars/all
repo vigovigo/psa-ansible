@@ -1,0 +1,28 @@
+### AuthorizedKeys File Path ###
+
+authorized_keys_dir: '/etc/ssh/authorized_keys'
+authorized_keys_dst: '/etc/ssh/authorized_keys/{{ item.user }}'
+authorized_keys_root: '/etc/ssh/authorized_keys/root'
+managed_authorized_keys_dir: '/etc/ssh/authorized_keys/%u'
+
+# UTUM Managed Administrator Users
+admins:
+  - name:   Viktor Goldberg
+    user:   goldberg
+    group:  utum-admin,sudo
+
+  - name:   Sebastian Gerstl
+    user:   gerstl
+    group:  utum-admin,sudo
+
+  - name:   Daniel Friedrich
+    user:   friedrich
+    group:  utum-admin,sudo
+
+  - name:   Patrick Melchner
+    user:   melchner
+    group:  utum-admin,sudo
+
+  - name:   Sirus Shahbakhti
+    user:   shahbakhti
+    group:  utum-admin,sudo

@@ -1,0 +1,78 @@
+---
+
+- name: Create key directory
+  action: file path=/etc/ssh/authorized_keys state=directory
+    owner=0 group=0 mode=0755
+
+- name: Create PSA Groups
+  group: name={{ item.name }} gid={{ item.gid }} state=present
+  with_items: psa_groups
+
+- name: Create PSA Users
+  user: name={{ item.user }} comment={{ item.name }} uid={{ item.uid }} group={{ item.group }} shell=/bin/bash
+  with_items: psa_users
+
+- name: Add goldbergv and kiwus to sudoers file
+  template: src=/etc/ansible/roles/psa_common/templates/sudoers.jinja2
+    dest=/etc/sudoers
+    backup=yes
+    owner=0 group=0 mode=440
+
+- name: Add PSA Supervisor Andreas Paul, VG and nm1 (Ansible) as root
+  authorized_key: user=root key="{{ item }}" path=/etc/ssh/authorized_keys/root state=present
+  with_file:
+    - pubs/psa-admin
+    - pubs/goldberv
+    - pubs/nm1
+    - pubs/kiwus
+
+- name: Upload PSA user's Public Key
+  action: copy src=/etc/ansible/roles/psa_common/files/pubs/{{ item.user }}
+    dest=/etc/ssh/authorized_keys/
+    owner=0 group=0 mode=644
+  with_items: psa_users
+
+- name: SSHd configuration file update according to PSA policies
+  template: src=/etc/ansible/roles/psa_common/templates/psa_sshd-config.jinja2
+    dest=/etc/ssh/sshd_config
+    backup=yes
+    owner=0 group=0 mode=644
+  #  validate='/usr/sbin/sshd -T -f %s'
+  notify: restart sshd
+
+
+# BLATT 7: Add User HomeDir from Fileserver Mount
+- name: Install nfs-common
+  apt: name=nfs-common state=present
+
+- name: Install autofs
+  apt: name=autofs state=present
+
+- name: Swap auto.master file
+  template:
+    src: /etc/ansible/roles/psa_common/templates/auto.master.j2
+    dest: /etc/auto.master
+
+- name: Add psa.homedir file for custom PSA homedir Mount
+  template:
+    src: /etc/ansible/roles/psa_common/templates/psa.homedir.j2
+    dest: /etc/psa.homedir
+  notify: restart autofs
+
+# Add PSA Certificate Authority to all managed Servers
+
+- name: Ensure local certs directory is present
+  file:
+    state: directory
+    path: /usr/local/share/ca-certificates
+
+- name: Install PSA TEAM07 Root CA cert
+  copy:
+    src: /etc/ansible/roles/psa_common/files/team07-root.pem
+    dest: /usr/local/share/ca-certificates/team07-root.pem
+  notify: update ca store
+
+- name: Change resolv.conf to fit PSA settings
+  template:
+    src: /etc/ansible/roles/psa_common/templates/resolv.conf.j2
+    dest: /etc/resolv.conf

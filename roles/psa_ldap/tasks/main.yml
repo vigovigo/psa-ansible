@@ -1,0 +1,5 @@
+- name: Create ldif template per PSA user
+  template: src=/etc/ansible/roles/psa_ldap/templates/user.j2
+    dest=/root/psausers/{{ item.user }}
+    owner=0 group=0 mode=777
+  with_items: psa_users
